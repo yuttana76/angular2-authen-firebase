@@ -13,6 +13,9 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 
 import { AuthService } from './services/auth.service';
+import { AuthGuardService } from './services/auth-guard.service';
+
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -23,12 +26,13 @@ import { AuthService } from './services/auth.service';
   imports: [
     BrowserModule,
     AppRoutes,
+    FormsModule,
     AngularFireModule.initializeApp(environment.firebaseConifg, 'angular-auth-firebase'),
     AngularFireDatabaseModule,
     AngularFireAuthModule
 
   ],
-  providers: [AuthService],
+  providers: [AuthService,AuthGuardService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

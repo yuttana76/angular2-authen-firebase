@@ -13,8 +13,18 @@ export class AuthService {
   private userDetails: firebase.User = null;
 
   constructor(private _firebaseAuth: AngularFireAuth, private router: Router) { 
-    this.user = _firebaseAuth.authState;
 
+    this.user = _firebaseAuth.authState;
+    this.user.subscribe(
+      (user) => {
+        if (user) {
+          this.userDetails = user;
+          console.log(" constructor >>"+JSON.stringify(this.userDetails));
+        } else {
+          this.userDetails = null;
+        }
+      }
+    );
   }
 
   signInWithTwitter() {
@@ -47,7 +57,19 @@ export class AuthService {
     return this._firebaseAuth.auth.signInWithEmailAndPassword(email, password)
   }
 
+  login(email, password) {
+    const credential = firebase.auth.EmailAuthProvider.credential( email, password );
+    return this._firebaseAuth.auth.signInWithEmailAndPassword(email,password).then(user=>{
+      this.user = user;
+      console.log('Success' + JSON.stringify(user));
+    }).catch(error =>console.log(error));
+
+  }
+
   isLoggedIn() {
+    
+    console.log("isLoggedIn()>>"+this.userDetails);
+
     if (this.userDetails == null ) {
         return false;
       } else {
@@ -55,6 +77,12 @@ export class AuthService {
       }
     }
   
+    getDisplayName(){
+      return this.userDetails.displayName;
+    }
+    getEmail(){
+      return this.userDetails.email;
+    }
   
     logout() {
       this._firebaseAuth.auth.signOut()
